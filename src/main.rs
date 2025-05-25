@@ -26,12 +26,13 @@ fn handle_connection(mut stream: TcpStream) -> io::Result<()> {
 fn main() -> io::Result<()> {
     let addr = "0.0.0.0:8888";
     let listener = TcpListener::bind(addr)?;
+    println!("Listening on {}", addr);
 
     for stream in listener.incoming(){
         match stream {
             Ok(strm) => {
                 println!("Got a connection!");
-                handle_connection(strm)?;
+                std::thread::spawn(|| handle_connection(strm));
             }
             Err(err) => {
                 eprintln!("Error: {}", err);
