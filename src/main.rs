@@ -15,10 +15,11 @@ fn handle_connection(mut stream: TcpStream) -> io::Result<()> {
                 return Err(e);
             }
         };
-        if bytes_read == 0 {
-            break;
-        }
+        let request = String::from_utf8_lossy(&buffer[..bytes_read]);
+        let response = "200 OK\r\n\r\n";
         println!("<<<<REQUEST>>>>\r\n{}", String::from_utf8_lossy(&buffer[..bytes_read]));
+        
+        stream.write(response.as_bytes())?;
     }
     Ok(())
 }
