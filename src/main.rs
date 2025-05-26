@@ -16,6 +16,14 @@ fn parse_command(input: &str) -> Command {
     }
 }
 
+fn handle_protocol(cmd: Command) -> Result<String, &'static str> {
+    match cmd.kind.as_str() { 
+        "000" => Ok("Welcome user".into()),
+        "001" => Ok("Operation: connected!".into()),
+        _ => Err("Operation: Unknown".into())
+    }
+}
+
 fn handle_connection(mut stream: TcpStream) -> io::Result<()> {
     let mut buffer = [0 as u8; 512];
     loop {
@@ -33,11 +41,16 @@ fn handle_connection(mut stream: TcpStream) -> io::Result<()> {
         let request = String::from_utf8_lossy(&buffer[..bytes_read]);
         let command = parse_command(&request);
         println!("Command: {} | Args: {}", command.kind, command.args);
+        match handle_protocol(command) { 
+            Ok(response) => {
+                stream.write(response.as_bytes())?;
+            },
+            Err(err_response) => {
+                stream.write(err_response.as_bytes())?;
+            }
+        }
         
-        let response = "200 OK\r\n";
-        stream.write(response.as_bytes())?;
     }
-    Ok(())
 }
 
 fn main() -> io::Result<()> {
