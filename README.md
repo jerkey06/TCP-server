@@ -66,6 +66,37 @@ The server creates a TCP listener bound to 0.0.0.0:8888. For each incoming conne
 
 The server handles client disconnections and connection errors appropriately, printing status messages to the console.
 
+### Command Protocol
+
+The server implements a simple command protocol that processes incoming messages and returns appropriate responses:
+
+| Command | Description | Response |
+|---------|-------------|----------|
+| `000` | Welcome command | `Welcome user` |
+| `001` | Connection confirmation | `Operation: connected!` |
+| `002 PUSH` | Push operation | `Operation: PUSH \| Success` |
+| `002 PULL` | Pull operation | `Operation: PULL \| Success` |
+
+Any unrecognized command will return `Operation: Unknown`.
+
+#### Example Usage:
+
+```
+# Send welcome command
+000
+
+# Confirm connection
+001
+
+# Execute push operation
+002 PUSH
+
+# Execute pull operation
+002 PULL
+```
+
+The server parses each command, extracts any arguments, and processes them according to the protocol rules. Command responses are sent back to the client.
+
 ## Project Structure
 
 - `src/main.rs` - Contains the server implementation
