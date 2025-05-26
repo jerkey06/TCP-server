@@ -16,10 +16,26 @@ fn parse_command(input: &str) -> Command {
     }
 }
 
+fn parse_subcommand(args: &str) -> (&str, &str) {
+    let mut parts = args.trim().splitn(2, char::is_whitespace);
+    let subcommand = parts.next().unwrap_or("");
+    let extra = parts.next().unwrap_or("");
+    (subcommand, extra)
+}
+
 fn handle_protocol(cmd: Command) -> Result<String, &'static str> {
-    match cmd.kind.as_str() { 
+    match cmd.kind.as_str() {
         "000" => Ok("Welcome user\r\n".into()),
         "001" => Ok("Operation: connected!\r\n".into()),
+        "002" => {
+            let (subcmd, extra) = parse_subcommand(cmd.args);
+            let response = match subcmd {
+                "PUSH" => "Operation: PUSH | Success\r\n".into(),
+                "PULL" => "Operation: PULL | Success\r\n".into(),
+                _ => "Operation: 002 | Unknown\r\n".into(),
+            };
+            Ok(response)
+        },
         _ => Err("Operation: Unknown\r\n".into())
     }
 }
@@ -41,7 +57,7 @@ fn handle_connection(mut stream: TcpStream) -> io::Result<()> {
         let request = String::from_utf8_lossy(&buffer[..bytes_read]);
         let command = parse_command(&request);
         println!("Command: {} | Args: {}", command.kind, command.args);
-        match handle_protocol(command) { 
+        match handle_protocol(command) {
             Ok(response) => {
                 stream.write(response.as_bytes())?;
             },
@@ -49,7 +65,7 @@ fn handle_connection(mut stream: TcpStream) -> io::Result<()> {
                 stream.write(err_response.as_bytes())?;
             }
         }
-        
+
     }
 }
 
