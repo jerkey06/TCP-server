@@ -1,6 +1,21 @@
 use std::net::{TcpListener, TcpStream};
 use std::io::{self, Read, Write};
 
+struct Command<'a> {
+    kind: String,
+    args: &'a str
+}
+
+fn parse_command(input: &str) -> Command {
+    let mut parts = input.trim().splitn(2, char::is_whitespace);
+    let kind = parts.next().unwrap_or("").to_uppercase();
+    let args = parts.next().unwrap_or("");
+    Command {
+        kind,
+        args,
+    }
+}
+
 fn handle_connection(mut stream: TcpStream) -> io::Result<()> {
     let mut buffer = [0 as u8; 512];
     loop {
@@ -16,9 +31,10 @@ fn handle_connection(mut stream: TcpStream) -> io::Result<()> {
             }
         };
         let request = String::from_utf8_lossy(&buffer[..bytes_read]);
-        let response = "200 OK\r\n\r\n";
-        println!("<<<<REQUEST>>>>\r\n{}", String::from_utf8_lossy(&buffer[..bytes_read]));
+        let command = parse_command(&request);
+        println!("Command: {} | Args: {}", command.kind, command.args);
         
+        let response = "200 OK\r\n";
         stream.write(response.as_bytes())?;
     }
     Ok(())
