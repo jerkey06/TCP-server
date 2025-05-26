@@ -102,10 +102,6 @@ The server parses each command, extracts any arguments, and processes them accor
 - `src/main.rs` - Contains the server implementation
 - `Cargo.toml` - Project configuration and dependencies
 
-## License
-
-[MIT License](LICENSE) (or specify your preferred license)
-
 ## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
