@@ -18,9 +18,9 @@ fn parse_command(input: &str) -> Command {
 
 fn handle_protocol(cmd: Command) -> Result<String, &'static str> {
     match cmd.kind.as_str() { 
-        "000" => Ok("Welcome user".into()),
-        "001" => Ok("Operation: connected!".into()),
-        _ => Err("Operation: Unknown".into())
+        "000" => Ok("Welcome user\r\n".into()),
+        "001" => Ok("Operation: connected!\r\n".into()),
+        _ => Err("Operation: Unknown\r\n".into())
     }
 }
 
