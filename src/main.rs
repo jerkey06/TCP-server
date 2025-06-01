@@ -36,6 +36,35 @@ fn handle_protocol(cmd: Command) -> Result<String, &'static str> {
             };
             Ok(response)
         },
+        "GET" => {
+            let (path, _content) = parse_subcommand(cmd.args);
+            match path {
+                "/" => {
+                    let content = "Welcome to Rust Server";
+                    let http_response = format!(
+                        "HTTP/1.1 200 OK\r\n\
+                        Content-Length: {}\r\n\
+                        Content-Type: text/html\r\n\
+                        {}\n",
+                        content.len(),
+                        content
+                    );
+                    Ok(http_response)
+                },
+                _ => {
+                    let content = "404 not found";
+                    let http_response = format!(
+                        "HTTP/1.1 404 Not Found\r\n\
+                        Content-Length: {}\r\n\
+                        Content-Type: text/html\r\n\
+                        {}\n",
+                        content.len(),
+                        content
+                    );
+                    Ok(http_response)
+                }
+            }
+        },
         _ => Err("Operation: Unknown\r\n".into())
     }
 }
