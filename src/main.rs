@@ -44,7 +44,7 @@ fn handle_protocol(cmd: Command) -> Result<String, &'static str> {
                     let http_response = format!(
                         "HTTP/1.1 200 OK\r\n\
                         Content-Length: {}\r\n\
-                        Content-Type: text/html\r\n\
+                        Content-Type: text/html\r\n\r\n\
                         {}\n",
                         content.len(),
                         content
@@ -56,7 +56,7 @@ fn handle_protocol(cmd: Command) -> Result<String, &'static str> {
                     let http_response = format!(
                         "HTTP/1.1 404 Not Found\r\n\
                         Content-Length: {}\r\n\
-                        Content-Type: text/html\r\n\
+                        Content-Type: text/html\r\n\r\n\
                         {}\n",
                         content.len(),
                         content
